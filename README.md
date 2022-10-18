@@ -41,7 +41,7 @@ Then you can configure `multi-db` and connect to your database.
 ### Connecting to a database using multi-db
 
 ```javascript
-const db = await require('multi-db')(config) // config object is optional
+const db = await require('multi-db-driver')(config) // config object is optional
 ```
 
 That will load a `multi-db` config and connect to your chosen database.
@@ -262,7 +262,7 @@ Replace the `[...]` part in the above examples with the path to where your copy 
 When you connect to a database using `multi-db` like in the below example, the constructor will return a `db` object.
 
 ```javascript
-const db = await require('multi-db')(config)
+const db = await require('multi-db-driver')(config) // config object is optional
 ```
 
 This is the structure of the `db` object that `multi-db` returns:
