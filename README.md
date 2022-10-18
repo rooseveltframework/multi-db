@@ -3,6 +3,8 @@
 multi-db
 ===
 
+[![npm](https://img.shields.io/npm/v/multi-db-driver.svg)](https://www.npmjs.com/package/multi-db-driver)
+
 A thin abstraction around selected Node.js database drivers to normalize their APIs to one simplified common API. This makes it possible to write a Node.js app that supports multiple databases by configuration with minimal additional boilerplate needed per additional database.
 
 `multi-db` currently supports MariaDB, MySQL, PGlite, PostgreSQL, and SQLite.
@@ -32,9 +34,9 @@ List of currently-supported database drivers:
 - [pg](https://www.npmjs.com/package/pg) for PostgreSQL.
 - [better-sqlite3](https://www.npmjs.com/package/better-sqlite3) for SQLite.
 
-Then mark `multi-db` as a dependency in your app as well. `multi-db` is generally designed to work with the latest version of each supported database driver.
+Then mark the `multi-db-driver` npm package as a dependency in your app as well. `multi-db` is generally designed to work with the latest version of each supported database driver.
 
-Then you can configure `multi-db` and connect to your database. 
+Then you can configure `multi-db` and connect to your database.
 
 ### Connecting to a database using multi-db
 
@@ -61,7 +63,7 @@ The following params are available when creating your `multi-db` config file or 
 #### Required params
 
 - `default`: *[String]* Which database your app will use by default.
-  - Available options: 
+  - Available options:
     - `mariadb`
     - `mysql`
     - `pglite`
@@ -388,7 +390,7 @@ function (db, result) {
 ```
 - Do this by supplying an object instead of a string to the query argument.
 - Also combines all the other above features too, showing a maximally featureful and flexible version of the query method.
-- By default `multi-db` will rewrite the query under the hood to use `$1` instead of `?` for queries being executed against PGlite and PostgreSQL. You can disable this behavior by setting `questionMarkParamsForPostgres` to `false` in your `multi-db` config, or by setting `disableQuestionMarkParamsForPostgres` to `true` at the query level in the query object. 
+- By default `multi-db` will rewrite the query under the hood to use `$1` instead of `?` for queries being executed against PGlite and PostgreSQL. You can disable this behavior by setting `questionMarkParamsForPostgres` to `false` in your `multi-db` config, or by setting `disableQuestionMarkParamsForPostgres` to `true` at the query level in the query object.
 
 ## Writing code for multi-db
 
@@ -421,7 +423,7 @@ Here's how to set up a development environment to hack on `multi-db`'s code and 
     - `sudo mysql -u root`
     - `ALTER USER 'root'@'localhost' IDENTIFIED WITH mysql_native_password BY 'password';`
 - Install PostgreSQL:
-  - Windows: 
+  - Windows:
     - Install from: https://www.enterprisedb.com/downloads/postgres-postgresql-downloads
     - Use `postgres` for the superuser password.
   - Mac:
@@ -435,7 +437,7 @@ Here's how to set up a development environment to hack on `multi-db`'s code and 
     - `quit`
     - Change line in pg_hba.conf file under `# "local" is for Unix domain socket connections only` to `local all all trust`.
 - Install SQLite:
-  - Windows: 
+  - Windows:
     - Download `sqlite-tools-....zip` listed under `Precompiled Binaries for Windows` from: https://www.sqlite.org/download.html
     - Create a new folder named `sqlite` anywhere on your machine.
     - Extract contents of `sqlite-tools-....zip` into your created `sqlite` folder.

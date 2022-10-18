@@ -1,5 +1,5 @@
 {
-  "name": "multi-db",
+  "name": "multi-db-driver",
   "description": "🐙 A thin abstraction around selected Node.js database drivers to normalize their APIs to one simplified common API.",
   "author": "Roosevelt Framework Team <rooseveltframework@gmail.com>",
   "contributors": [
