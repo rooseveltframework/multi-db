@@ -1,0 +1,60 @@
+{
+  "name": "multi-db",
+  "description": "🐙 A thin abstraction around selected Node.js database drivers to normalize their APIs to one simplified common API.",
+  "author": "Roosevelt Framework Team <rooseveltframework@gmail.com>",
+  "contributors": [
+    {
+      "name": "Contributors",
+      "url": "https://github.com/rooseveltframework/multi-db/graphs/contributors"
+    }
+  ],
+  "version": "1.0.0",
+  "homepage": "https://github.com/rooseveltframework/multi-db",
+  "license": "CC-BY-4.0",
+  "main": "multi-db.js",
+  "engines": {
+    "node": ">=18.0.0"
+  },
+  "dependencies": {
+    "fs-extra": "11.2.0",
+    "node-sql-parser": "5.3.3",
+    "roosevelt-logger": "0.2.3",
+    "yesno": "0.4.0"
+  },
+  "devDependencies": {
+    "@electric-sql/pglite": "0.2.12",
+    "better-sqlite3": "11.4.0",
+    "c8": "10.1.2",
+    "mariadb": "3.3.2",
+    "mocha": "10.7.3",
+    "mysql2": "3.11.3",
+    "pg": "8.13.0",
+    "standard": "17.1.2"
+  },
+  "mocha": {
+    "timeout": "700000ms"
+  },
+  "scripts": {
+    "lint": "standard",
+    "lint-fix": "standard --fix",
+    "test": "mocha test/*.js",
+    "docker-test": "mocha test/*.js --docker",
+    "coverage": "c8 --reporter=text --reporter=lcov mocha test/*.js --test",
+    "docker-coverage": "c8 --reporter=text --reporter=lcov mocha test/*.js --docker --test"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/rooseveltframework/multi-db.git"
+  },
+  "keywords": [
+    "multi",
+    "db",
+    "postgres",
+    "postgresql",
+    "mysql",
+    "mariadb",
+    "pglite",
+    "sqlite"
+  ],
+  "funding": "https://www.paypal.com/donate/?hosted_button_id=2L2X8GRXZCGJ6"
+}
