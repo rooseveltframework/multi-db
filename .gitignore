@@ -170,3 +170,14 @@ temp/
 
 .npmrc
 
+multi-db-mysql-dump-password.cnf
+.multi-db-config.json
+.npm-cache
+test/configs
+test/db
+test/sqlite-db
+test/pglite-db
+test/invalid
+test/path-doesnt-exist
+test/util
+test/nested-multi-db
