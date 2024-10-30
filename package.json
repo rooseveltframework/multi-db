@@ -25,7 +25,7 @@
     "@electric-sql/pglite": "0.2.12",
     "better-sqlite3": "11.5.0",
     "c8": "10.1.2",
-    "mariadb": "3.3.2",
+    "mariadb": "3.4.0",
     "mocha": "10.7.3",
     "mysql2": "3.11.3",
     "pg": "8.13.1",
