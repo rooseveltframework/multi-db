@@ -17,17 +17,17 @@
   },
   "dependencies": {
     "fs-extra": "11.2.0",
-    "node-sql-parser": "5.3.4",
+    "node-sql-parser": "5.3.5",
     "roosevelt-logger": "0.2.3",
     "yesno": "0.4.0"
   },
   "devDependencies": {
     "@electric-sql/pglite": "0.2.14",
-    "better-sqlite3": "11.6.0",
+    "better-sqlite3": "11.7.0",
     "c8": "10.1.2",
     "mariadb": "3.4.0",
-    "mocha": "10.8.2",
-    "mysql2": "3.11.4",
+    "mocha": "11.0.1",
+    "mysql2": "3.11.5",
     "pg": "8.13.1",
     "standard": "17.1.2"
   },
