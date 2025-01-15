@@ -16,7 +16,7 @@
     "node": ">=18.0.0"
   },
   "dependencies": {
-    "fs-extra": "11.2.0",
+    "fs-extra": "11.3.0",
     "node-sql-parser": "5.3.6",
     "roosevelt-logger": "0.2.3",
     "yesno": "0.4.0"
