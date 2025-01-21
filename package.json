@@ -16,14 +16,14 @@
     "node": ">=18.0.0"
   },
   "dependencies": {
-    "fs-extra": "11.2.0",
+    "fs-extra": "11.3.0",
     "node-sql-parser": "5.3.6",
     "roosevelt-logger": "0.2.3",
     "yesno": "0.4.0"
   },
   "devDependencies": {
-    "@electric-sql/pglite": "0.2.15",
-    "better-sqlite3": "11.7.2",
+    "@electric-sql/pglite": "0.2.16",
+    "better-sqlite3": "11.8.1",
     "c8": "10.1.3",
     "mariadb": "3.4.0",
     "mocha": "11.0.1",
