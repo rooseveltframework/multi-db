@@ -18,7 +18,7 @@
   "dependencies": {
     "fs-extra": "11.3.0",
     "node-sql-parser": "5.3.6",
-    "roosevelt-logger": "0.2.3",
+    "roosevelt-logger": "1.0.1",
     "yesno": "0.4.0"
   },
   "devDependencies": {
