@@ -1,5 +1,3 @@
-![Original logo by Lorc; modified for this project https://game-icons.net/1x1/lorc/octopus.html](multi-db.png)
-
 multi-db
 ===
 
@@ -8,6 +6,8 @@ multi-db
 A thin abstraction around selected Node.js database drivers to normalize their APIs to one simplified common API. This makes it possible to write a Node.js app that supports multiple databases by configuration with minimal additional boilerplate needed per additional database.
 
 `multi-db` currently supports MariaDB, MySQL, PGlite, PostgreSQL, and SQLite.
+
+![Original logo by Lorc; modified for this project https://game-icons.net/1x1/lorc/octopus.html](multi-db.png)
 
 ## Features and design philosophy
 
