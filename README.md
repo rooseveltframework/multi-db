@@ -1,4 +1,4 @@
-[![npm](https://img.shields.io/npm/v/multi-db-driver.svg)](https://www.npmjs.com/package/multi-db-driver)
+🐙 **multi-db-driver** [![npm](https://img.shields.io/npm/v/multi-db-driver.svg)](https://www.npmjs.com/package/multi-db-driver)
 
 <img src="https://media.githubusercontent.com/media/rooseveltframework/multi-db/refs/heads/main/multi-db.png" alt="Multi-DB logo" title="Multi-DB logo" class="float-right rounded-edges">
 
