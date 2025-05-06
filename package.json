@@ -9,7 +9,7 @@
     }
   ],
   "version": "1.0.1",
-  "homepage": "https://github.com/rooseveltframework/multi-db",
+  "homepage": "https://rooseveltframework.org/docs/multi-db/latest",
   "license": "CC-BY-4.0",
   "main": "multi-db.js",
   "engines": {
