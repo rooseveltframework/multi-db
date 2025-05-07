@@ -131,9 +131,9 @@ Proceed? 🤔`
     if (schemaPath) {
       const ok = skipPrompts || await yesno({
         question: `
-    This script will:
-    ↳🥟 Dump ${dbConfig.database}'s schema to ${schemaPath}
-    Proceed? 🤔`
+This script will:
+↳🥟 Dump ${dbConfig.database}'s schema to ${schemaPath}
+Proceed? 🤔`
       })
       if (ok) {
         await dumpSchema(schemaPath)
@@ -144,9 +144,9 @@ Proceed? 🤔`
     if (schemaPath) {
       const ok = skipPrompts || await yesno({
         question: `
-    This script will:
-    ↳🥟 Dump ${dbConfig.database}'s schema and data to ${schemaPath}
-    Proceed? 🤔`
+This script will:
+↳🥟 Dump ${dbConfig.database}'s schema and data to ${schemaPath}
+Proceed? 🤔`
       })
       if (ok) {
         await dumpData(schemaPath)
