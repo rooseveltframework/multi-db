@@ -267,10 +267,24 @@ async function multiDb (params) {
     try {
       let result
       if (isCli) result = await db.sqlite.db.exec(query)
-      else if (!isCli && !query.toLowerCase().includes('select')) result = await db.sqlite.db.prepare(query).run(params)
-      else result = await db.sqlite.db.prepare(query).all(params)
-      result = {
-        rows: result
+      else {
+        if (!query.toLowerCase().startsWith('select')) {
+          if (params && typeof params[0] === 'object') {
+            // it's an array of objects or an array of arrays, so perform a transaction
+            const transaction = await db.sqlite.db.prepare(query)
+            const transactionRunner = await db.sqlite.db.transaction((paramsArray) => {
+              for (const param of paramsArray) transaction.run(param)
+            })
+            result = transactionRunner(params)
+          } else {
+            result = await db.sqlite.db.prepare(query).run(params || [])
+          }
+        } else {
+          result = await db.sqlite.db.prepare(query).all(params || [])
+        }
+        result = {
+          rows: result
+        }
       }
       return result
     } catch (e) {
