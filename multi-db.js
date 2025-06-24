@@ -79,7 +79,23 @@ async function multiDb (params) {
   }
   db.mariadb.query = async (query, params) => {
     try {
-      let result = await db.mariadb.conn.query(query, params)
+      let result
+      if (!query.trim().toLowerCase().startsWith('select') && params && typeof params[0] === 'object') {
+        // it's an array of objects or an array of arrays, so perform a transaction
+        try {
+          await db.mariadb.conn.beginTransaction()
+          for (let param of params) {
+            if (!Array.isArray(param)) param = Object.values(param)
+            await db.mariadb.conn.query(query, param)
+          }
+          await db.mariadb.conn.commit()
+        } catch (e) {
+          await db.mariadb.conn.rollback()
+          throw e
+        }
+      } else {
+        result = await db.mariadb.conn.query(query, params)
+      }
       result = {
         rows: result
       }
@@ -125,11 +141,27 @@ async function multiDb (params) {
   }
   db.mysql.query = async (query, params) => {
     try {
-      let result = await db.mysql.conn.query(query, params)
+      let result
+      if (!query.trim().toLowerCase().startsWith('select') && params && typeof params[0] === 'object') {
+        // it's an array of objects or an array of arrays, so perform a transaction
+        try {
+          await db.mysql.conn.beginTransaction()
+          for (let param of params) {
+            if (!Array.isArray(param)) param = Object.values(param)
+            await db.mysql.conn.query(query, param)
+          }
+          await db.mysql.conn.commit()
+        } catch (e) {
+          await db.mysql.conn.rollback()
+          throw e
+        }
+      } else {
+        result = await db.mysql.conn.query(query, params)
+      }
       result = {
         full: result
       }
-      result.rows = result.full[0]
+      result.rows = result.full?.[0]
       return result
     } catch (e) {
       logger.error('🐬', 'MySQL query error...')
@@ -169,10 +201,27 @@ async function multiDb (params) {
           }
         }
       }
+      let queryToUse
       if (modifiedQuery) {
         db.modifiedQueryCache[query] = modifiedQuery
-        return await db.pglite.db.query(modifiedQuery, params)
-      } else return await db.pglite.db.query(query, params)
+        queryToUse = modifiedQuery
+      } else queryToUse = query
+      if (!query.trim().toLowerCase().startsWith('select') && params && typeof params[0] === 'object') {
+        // it's an array of objects or an array of arrays, so perform a transaction
+        await db.pglite.db.transaction(async (tx) => {
+          try {
+            for (let param of params) {
+              if (!Array.isArray(param)) param = Object.values(param)
+              await tx.query(queryToUse, param)
+            }
+          } catch (e) {
+            await tx.rollback()
+            throw e
+          }
+        })
+      } else {
+        return await db.pglite.db.query(queryToUse, params)
+      }
     } catch (e) {
       logger.error('⚡️', 'PGlite query error...')
       logger.error('Query attempted: ', query)
@@ -230,10 +279,27 @@ async function multiDb (params) {
           }
         }
       }
+      let queryToUse
       if (modifiedQuery) {
         db.modifiedQueryCache[query] = modifiedQuery
-        return await db.postgres.client.query(modifiedQuery, params)
-      } else return await db.postgres.client.query(query, params)
+        queryToUse = modifiedQuery
+      } else queryToUse = query
+      if (!query.trim().toLowerCase().startsWith('select') && params && typeof params[0] === 'object') {
+        // it's an array of objects or an array of arrays, so perform a transaction
+        try {
+          await db.postgres.client.query('BEGIN')
+          for (let param of params) {
+            if (!Array.isArray(param)) param = Object.values(param)
+            await db.postgres.client.query(queryToUse, param)
+          }
+          await db.postgres.client.query('COMMIT')
+        } catch (e) {
+          await db.postgres.client.query('ROLLBACK')
+          throw e
+        }
+      } else {
+        return await db.postgres.client.query(queryToUse, params)
+      }
     } catch (e) {
       logger.error('🐘', 'PostgreSQL query error...')
       logger.error('Query attempted: ', query)
@@ -268,7 +334,7 @@ async function multiDb (params) {
       let result
       if (isCli) result = await db.sqlite.db.exec(query)
       else {
-        if (!query.toLowerCase().startsWith('select')) {
+        if (!query.trim().toLowerCase().startsWith('select')) {
           if (params && typeof params[0] === 'object') {
             // it's an array of objects or an array of arrays, so perform a transaction
             const transaction = await db.sqlite.db.prepare(query)
