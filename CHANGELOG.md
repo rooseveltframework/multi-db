@@ -1,6 +1,6 @@
 ## 1.0.2
 
-- Altered the logic of the `query` method for SQLite to perform a transaction if `params` is supplied an array of objects or an array of arrays.
+- Altered the logic of the `query` method to perform a transaction if `params` is supplied an array of objects or an array of arrays.
 - Fixed a CLI text alignment issue.
 - Updated dependencies.
 

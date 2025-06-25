@@ -172,7 +172,7 @@ This is the structure of the `db` object that Multi-DB returns:
         - `disableQuestionMarkParamsForPostgres`: Set to true to prevent the query from attempting to normalize parameterized query placeholders from `?` syntax to `$1 $2 $3 etc` syntax for PostgreSQL and PGlite queries.
     - `params` *[Array]*: Optional array of parameters to supply values to the query.
       - When supplied an array of strings, it will perform a normal query.
-      - When supplied an array of objects or an array of arrays, it will perform a transaction. The automatic transaction feature is currently limited to SQLite only.
+      - When supplied an array of objects or an array of arrays, it will perform a transaction.
     - `next(db, result)` *[Function]*: Optional callback function to execute when the query is finished.
       - Arguments provided:
         - `db` *[String]*: Which database the query was executed against.
