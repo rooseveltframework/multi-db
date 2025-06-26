@@ -26,18 +26,32 @@ async function insertValuesIntoPgliteTable () {
   })
 
   // insert values into table
-  for (let i = 0; i < values.length; i++) {
+  let dbBeforeState
+  if (process.argv[2] === '--transaction') {
     await db.query(`insert into test_table (
       name,
       description
-    ) values (?, ?)`, [values[i].name, values[i].description])
+    ) values (?, ?)`, values)
+  } else if (process.argv[2] === '--transaction-rollback') {
+    dbBeforeState = await db.query('select * from test_table') // select all values from table
+    await db.query(`inser into test_table (
+      name,
+      description
+    ) values (?, ?)`, values)
+  } else {
+    for (let i = 0; i < values.length; i++) {
+      await db.query(`insert into test_table (
+        name,
+        description
+      ) values (?, ?)`, [values[i].name, values[i].description])
+    }
   }
 
-  // select all values from table
-  const { rows } = await db.query('select * from test_table')
+  const { rows } = await db.query('select * from test_table') // select all values from table
 
   await db.endConnection() // end connection
 
-  console.log(JSON.stringify(rows))
+  if (process.argv[2] === '--transaction-rollback') console.log(JSON.stringify(rows), JSON.stringify(dbBeforeState.rows))
+  else console.log(JSON.stringify(rows))
 }
 insertValuesIntoPgliteTable()

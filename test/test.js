@@ -819,6 +819,49 @@ describe('MariaDB', function () {
     assert.deepEqual(resultsArray, values) // check if results match inserted values
   })
 
+  it('should insert array of objects into table using a transaction', async function () {
+    if (!isDocker) process.env.MULTI_DB_CONFIG_LOCATION = './test/configs/.mariadb-config.json' // env var for config location
+    await createDatabase('mariadb') // create database
+
+    // connect to database
+    const db = await require('../multi-db')({
+      default: 'mariadb',
+      mariadb: {
+        config: {
+          host: 'localhost',
+          port: isDocker ? 3317 : 3306,
+          user: 'mariadb_multi_db_tests_user',
+          password: 'mariadb_multi_db_tests_password',
+          database: 'mariadb_multi_db_tests_database'
+        },
+        adminConfig: {
+          host: 'localhost',
+          port: isDocker ? 3317 : 3306,
+          user: 'root',
+          password: 'password',
+          database: 'mysql'
+        }
+      },
+      loggerConfig: {
+        log: false,
+        error: false,
+        verbose: false
+      }
+    })
+
+    // insert values into table
+    await db.query(`insert into test_table (
+      name,
+      description
+    ) values (?, ?)`, values)
+
+    const results = await db.query('select * from test_table') // select all values from table
+    const resultsArray = []
+    for (let i = 0; i < values.length; i++) resultsArray.push(results.rows[i])
+    await db.endConnection() // end connection
+    assert.deepEqual(resultsArray, values) // check if results match inserted values
+  })
+
   it('should delete all values from table', async function () {
     if (!isDocker) process.env.MULTI_DB_CONFIG_LOCATION = './test/configs/.mariadb-config.json' // env var for config location
     await createDatabase('mariadb') // create database
@@ -861,6 +904,49 @@ describe('MariaDB', function () {
     const results = await db.query('select * from test_table') // select all values from table
     await db.endConnection() // end connection
     assert.equal(results.rows.length, 0) // check if table has 0 rows
+  })
+
+  it('should roll back transaction due to error', async function () {
+    if (!isDocker) process.env.MULTI_DB_CONFIG_LOCATION = './test/configs/.mariadb-config.json' // env var for config location
+    await createDatabase('mariadb') // create database
+
+    // connect to database
+    const db = await require('../multi-db')({
+      default: 'mariadb',
+      mariadb: {
+        config: {
+          host: 'localhost',
+          port: isDocker ? 3317 : 3306,
+          user: 'mariadb_multi_db_tests_user',
+          password: 'mariadb_multi_db_tests_password',
+          database: 'mariadb_multi_db_tests_database'
+        },
+        adminConfig: {
+          host: 'localhost',
+          port: isDocker ? 3317 : 3306,
+          user: 'root',
+          password: 'password',
+          database: 'mysql'
+        }
+      },
+      loggerConfig: {
+        log: false,
+        error: false,
+        verbose: false
+      }
+    })
+
+    const dbBeforeState = await db.query('select * from test_table') // select all values from table
+
+    // insert values into table
+    await db.query(`inser into test_table (
+      name,
+      description
+    ) values (?, ?)`, values)
+
+    const dbAfterState = await db.query('select * from test_table') // select all values from table
+    await db.endConnection() // end connection
+    assert.deepEqual(dbAfterState.rows, dbBeforeState.rows) // check if results match inserted values
   })
 
   it('should print errors due to invalid SQL syntax', async function () {
@@ -987,6 +1073,46 @@ describe('MySQL', function () {
     assert.deepEqual(result.rows, values) // check if results match inserted values
   })
 
+  it('should insert array of objects into table using a transaction', async function () {
+    await createDatabase('mysql') // create database
+
+    // connect to database
+    const db = await multiDb({
+      default: 'mysql',
+      mysql: {
+        config: {
+          host: 'localhost',
+          port: isDocker ? 3307 : 3306,
+          user: 'mysql_multi_db_tests_user',
+          password: 'mysql_multi_db_tests_password',
+          database: 'mysql_multi_db_tests_database'
+        },
+        adminConfig: {
+          host: 'localhost',
+          port: isDocker ? 3307 : 3306,
+          user: 'root',
+          password: 'password',
+          database: 'mysql'
+        }
+      },
+      loggerConfig: {
+        log: false,
+        error: false,
+        verbose: false
+      }
+    })
+
+    // insert values into table
+    await db.query(`insert into test_table (
+      name,
+      description
+    ) values (?, ?)`, values)
+
+    const result = await db.query('select * from test_table') // select all values from table
+    await db.endConnection() // end connection
+    assert.deepEqual(result.rows, values) // check if results match inserted values
+  })
+
   it('should delete all values from table', async function () {
     await createDatabase('mysql') // create database
 
@@ -1028,6 +1154,48 @@ describe('MySQL', function () {
     const result = await db.query('select * from test_table') // select all values from table
     await db.endConnection() // end connection
     assert.equal(result.rows, 0) // check if table has 0 rows
+  })
+
+  it('should roll back transaction due to error', async function () {
+    await createDatabase('mysql') // create database
+
+    // connect to database
+    const db = await multiDb({
+      default: 'mysql',
+      mysql: {
+        config: {
+          host: 'localhost',
+          port: isDocker ? 3307 : 3306,
+          user: 'mysql_multi_db_tests_user',
+          password: 'mysql_multi_db_tests_password',
+          database: 'mysql_multi_db_tests_database'
+        },
+        adminConfig: {
+          host: 'localhost',
+          port: isDocker ? 3307 : 3306,
+          user: 'root',
+          password: 'password',
+          database: 'mysql'
+        }
+      },
+      loggerConfig: {
+        log: false,
+        error: false,
+        verbose: false
+      }
+    })
+
+    const dbBeforeState = await db.query('select * from test_table') // select all values from table
+
+    // insert values into table
+    await db.query(`inser into test_table (
+      name,
+      description
+    ) values (?, ?)`, values)
+
+    const dbAfterState = await db.query('select * from test_table') // select all values from table
+    await db.endConnection() // end connection
+    assert.deepEqual(dbAfterState.rows, dbBeforeState.rows) // check if results match inserted values
   })
 
   it('should print errors due to invalid SQL syntax', async function () {
@@ -1106,10 +1274,23 @@ describe('PGlite', function () {
     assert.deepEqual(result.trimEnd(), JSON.stringify(values))
   })
 
+  it('should insert array of objects into table using a transaction', async function () {
+    const insertValues = spawnSync('node', ['./test/util/insertValuesIntoPgliteTable.js', '--transaction'], { shell: false })
+    const result = insertValues.stdout.toString()
+    assert.deepEqual(result.trimEnd(), JSON.stringify(values))
+  })
+
   it('should delete all values from table', async function () {
     const deleteValues = spawnSync('node', ['./test/util/deleteValuesFromPgliteTable.js'], { shell: false })
     const result = deleteValues.stdout.toString()
     assert.equal(result.trimEnd(), '[]')// check if table has 0 rows
+  })
+
+  it('should roll back transaction due to error', async function () {
+    const insertValues = spawnSync('node', ['./test/util/insertValuesIntoPgliteTable.js', '--transaction-rollback'], { shell: false })
+    const result = insertValues.stdout.toString()
+    const splitResult = result.trimEnd().split(' ')
+    assert.deepEqual(splitResult[0], splitResult[1])
   })
 
   it('should print errors due to invalid SQL syntax', async function () {
@@ -1178,6 +1359,51 @@ describe('PostgreSQL', function () {
     assert.deepEqual(rows, values) // check if rows match inserted values
   })
 
+  it('should insert array of objects into table using a transaction', async function () {
+    await createDatabase('postgres') // create database
+
+    // connect to database
+    const db = await require('../multi-db')({
+      default: 'postgres',
+      postgres: {
+        config: {
+          host: 'localhost',
+          port: isDocker ? 5442 : 5432,
+          user: 'postgres_multi_db_tests_user',
+          password: 'postgres_multi_db_tests_password',
+          database: 'postgres_multi_db_tests_database'
+        },
+        adminConfig: {
+          host: 'localhost',
+          port: isDocker ? 5442 : 5432,
+          user: 'postgres',
+          password: 'postgres',
+          database: 'postgres'
+        },
+        schema: 'test/db/pglite_postgres_and_sqlite_schema.sql'
+      },
+      loggerConfig: {
+        log: false,
+        error: false,
+        verbose: false
+      }
+    })
+
+    // insert values into table
+    await db.query(`insert into test_table (
+      name,
+      description
+    ) values (?, ?)`, values)
+
+    // select all values from table
+    const { rows } = await db.query({
+      postgres: 'select * from test_table'
+    })
+
+    await db.endConnection() // end connection
+    assert.deepEqual(rows, values) // check if rows match inserted values
+  })
+
   it('should delete all values from table', async function () {
     await createDatabase('postgres') // create database
 
@@ -1221,6 +1447,49 @@ describe('PostgreSQL', function () {
     const { rows } = await db.query('select * from test_table') // select all values from table
     await db.endConnection() // end connection
     assert.equal(rows.length, 0) // check if table has 0 rows
+  })
+
+  it('should roll back transaction due to error', async function () {
+    await createDatabase('postgres') // create database
+
+    // connect to database
+    const db = await require('../multi-db')({
+      default: 'postgres',
+      postgres: {
+        config: {
+          host: 'localhost',
+          port: isDocker ? 5442 : 5432,
+          user: 'postgres_multi_db_tests_user',
+          password: 'postgres_multi_db_tests_password',
+          database: 'postgres_multi_db_tests_database'
+        },
+        adminConfig: {
+          host: 'localhost',
+          port: isDocker ? 5442 : 5432,
+          user: 'postgres',
+          password: 'postgres',
+          database: 'postgres'
+        },
+        schema: 'test/db/pglite_postgres_and_sqlite_schema.sql'
+      },
+      loggerConfig: {
+        log: false,
+        error: false,
+        verbose: false
+      }
+    })
+
+    const dbBeforeState = await db.query('select * from test_table') // select all values from table
+
+    // insert values into table
+    await db.query(`inser into test_table (
+      name,
+      description
+    ) values (?, ?)`, values)
+
+    const dbAfterState = await db.query('select * from test_table') // select all values from table
+    await db.endConnection() // end connection
+    assert.deepEqual(dbAfterState.rows, dbBeforeState.rows) // check if results match inserted values
   })
 
   it('should print errors due to invalid SQL syntax', async function () {
@@ -1324,6 +1593,37 @@ describe('SQLite', function () {
         name,
         description
       ) values (?, ?)`, [values[i].name, values[i].description])
+    }
+
+    const result = await db.query('select * from test_table') // select all values from table
+    await db.endConnection() // end connection
+    assert.deepEqual(result.rows, values) // check if rows match inserted values
+  })
+
+  it('should insert array of objects into table using a transaction', async function () {
+    await createDatabase('sqlite') // create database
+
+    // connect to database
+    const db = await require('../multi-db')({
+      default: 'sqlite',
+      sqlite: {
+        config: {
+          database: './test/sqlite-db/sqlite_multi_db_tests_database.sqlite'
+        }
+      },
+      loggerConfig: {
+        log: false,
+        error: false,
+        verbose: false
+      }
+    })
+
+    // insert values into table
+    for (let i = 0; i < values.length; i++) {
+      await db.query(`insert into test_table (
+        name,
+        description
+      ) values (@name, @description)`, values)
     }
 
     const result = await db.query('select * from test_table') // select all values from table
