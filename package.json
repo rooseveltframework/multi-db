@@ -23,7 +23,7 @@
   },
   "devDependencies": {
     "@electric-sql/pglite": "0.3.3",
-    "better-sqlite3": "12.1.1",
+    "better-sqlite3": "12.4.1",
     "c8": "10.1.3",
     "mariadb": "3.4.2",
     "mocha": "11.7.1",
