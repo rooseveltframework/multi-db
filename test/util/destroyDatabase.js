@@ -5,12 +5,12 @@ const { spawn } = require('child_process')
 
 // function that destroys database using CLI script
 module.exports = async (db, suppressLogs, enableVerbose) => {
-  const data = JSON.parse(fs.readFileSync(path.normalize('.multi-db-config.json')))
+  const data = JSON.parse(fs.readFileSync(path.normalize('.multi-db-driver-config.json')))
 
   if (db) data.default = db
 
   // override default in config
-  if (db) fs.writeFileSync(path.normalize('.multi-db-config.json'), JSON.stringify(data, null, 2))
+  if (db) fs.writeFileSync(path.normalize('.multi-db-driver-config.json'), JSON.stringify(data, null, 2))
 
   let destroyDatabaseChildProcess
   if (suppressLogs) destroyDatabaseChildProcess = isDocker && (db !== 'pglite' && db !== 'sqlite') ? spawn('docker', ['exec', '-i', `${db}-multidb-tests`, 'bin/bash', '-c', 'cd multi-db && node cli.js --destroy --suppress-logs --suppress-errors'], { shell: false }) : spawn('node', ['cli.js', '--destroy', '--suppress-logs', '--suppress-errors'], { shell: false }) // run node cli.js --destroy as a child process with suppress-logger flags

@@ -15,5 +15,5 @@ module.exports = () => {
   if (fs.existsSync(path.normalize(path.join(__dirname, '../nested-multi-db')))) fs.rmSync(path.normalize(path.join(__dirname, '../nested-multi-db')), { recursive: true, force: true }) // delete nested test folders and nested config
   if (fs.existsSync(path.normalize(path.join(__dirname, '../pglite-db')))) fs.rmSync(path.normalize(path.join(__dirname, '../pglite-db')), { recursive: true, force: true, maxRetries: 10 }) // delete pglite-db folder
   if (fs.existsSync(path.normalize(path.join(__dirname, '../sqlite-db')))) fs.rmSync(path.normalize(path.join(__dirname, '../sqlite-db')), { recursive: true, force: true, maxRetries: 10 }) // delete SQLite test database and sqlite-db folder
-  if (fs.existsSync(path.normalize(path.join(__dirname, '../../.multi-db-config.json')))) fs.unlinkSync(path.normalize(path.join(__dirname, '../../.multi-db-config.json'))) // delete .multi-db-config.json
+  if (fs.existsSync(path.normalize(path.join(__dirname, '../../.multi-db-driver-config.json')))) fs.unlinkSync(path.normalize(path.join(__dirname, '../../.multi-db-driver-config.json'))) // delete .multi-db-driver-config.json
 }

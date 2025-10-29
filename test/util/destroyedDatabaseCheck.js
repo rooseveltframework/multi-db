@@ -1,12 +1,12 @@
 const fs = require('fs')
-const multiDb = require('../../multi-db')
+const multiDb = require('../../multi-db-driver')
 const path = require('path')
 
 module.exports = async (db, droppedDatabase) => {
-  const data = JSON.parse(fs.readFileSync(path.normalize('.multi-db-config.json')))
+  const data = JSON.parse(fs.readFileSync(path.normalize('.multi-db-driver-config.json')))
 
   // override host and port in config
-  fs.writeFileSync(path.normalize('.multi-db-config.json'), JSON.stringify(data, null, 2))
+  fs.writeFileSync(path.normalize('.multi-db-driver-config.json'), JSON.stringify(data, null, 2))
   let multiDbConnection
   let mysqlAndMariaDbDatabases
   if (db === 'mariadb' || db === 'mysql') {

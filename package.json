@@ -11,7 +11,7 @@
   "version": "1.0.2",
   "homepage": "https://rooseveltframework.org/docs/multi-db/latest",
   "license": "CC-BY-4.0",
-  "main": "multi-db.js",
+  "main": "multi-db-driver.js",
   "engines": {
     "node": ">=20.0.0"
   },

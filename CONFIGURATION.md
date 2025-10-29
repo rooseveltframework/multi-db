@@ -1,6 +1,6 @@
-## Creating a Multi-DB config
+## Creating a Multi-DB-Driver config
 
-The following params are available when creating your Multi-DB config file or passing params via the constructor:
+The following params are available when creating your Multi-DB-Driver config file or passing params via the constructor:
 
 ### Required params
 
@@ -36,9 +36,9 @@ loggerConfig: {
 }
 ```
 
-- `questionMarkParamsForPostgres` *[Boolean]*: Automatically convert parameterized query placeholders from `?` to `$ + number` within Multi-DB for PostgreSQL queries so you can use the `?` syntax in PostgreSQL queries, which isn't possible in native PostgreSQL queries. Default: `true`.
+- `questionMarkParamsForPostgres` *[Boolean]*: Automatically convert parameterized query placeholders from `?` to `$ + number` within Multi-DB-Driver for PostgreSQL queries so you can use the `?` syntax in PostgreSQL queries, which isn't possible in native PostgreSQL queries. Default: `true`.
 
-- `mergeConfig` *[Boolean]*: Merge config values passed via constructor or environment variable with any `.multi-db-config.json` file detected in your app's directory structure. Default: `true`.
+- `mergeConfig` *[Boolean]*: Merge config values passed via constructor or environment variable with any `.multi-db-driver-config.json` file detected in your app's directory structure. Default: `true`.
 
 ### Example configs
 
@@ -146,17 +146,17 @@ Example for SQLite:
 
 ````
 
-You could also create a single config that has configs for multiple databases or all of them if you like, but only one can be connected to per instance of Multi-DB.
+You could also create a single config that has configs for multiple databases or all of them if you like, but only one can be connected to per instance of Multi-DB-Driver.
 
-## Multi-DB API
+## Multi-DB-Driver API
 
-When you connect to a database using Multi-DB like in the below example, the constructor will return a `db` object.
+When you connect to a database using Multi-DB-Driver like in the below example, the constructor will return a `db` object.
 
 ```javascript
 const db = await require('multi-db-driver')(config)
 ```
 
-This is the structure of the `db` object that Multi-DB returns:
+This is the structure of the `db` object that Multi-DB-Driver returns:
 
 - `db.query(...)` *[Function]*: Universal database query method that works on all supported databases.
   - Arguments you can pass:
@@ -202,8 +202,8 @@ This is the structure of the `db` object that Multi-DB returns:
 
 - `db.postgres` *[Object]*: PostgreSQL-specific APIs.
   - `driver` *[Object]*: The object the `pg` module returns in case you need to interact with it directly.
-  - `pool` *[Object]*: The instance of [pg.Pool](https://node-postgres.com/apis/pool) created by Multi-DB once instantiated.
-  - `client` *[Object]*: The instance of [pg.Client](https://node-postgres.com/apis/client) created by Multi-DB once instantiated.
+  - `pool` *[Object]*: The instance of [pg.Pool](https://node-postgres.com/apis/pool) created by Multi-DB-Driver once instantiated.
+  - `client` *[Object]*: The instance of [pg.Client](https://node-postgres.com/apis/client) created by Multi-DB-Driver once instantiated.
   - `username` *[String]*: Username of the current active connection, if a connection is active.
   - `database` *[String]*: Which database the currently active connection is connected to, if a connection is active.
   - `query(queryString)` *[Function]*: Function that takes a query string and executes it against the `pg` driver.

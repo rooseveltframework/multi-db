@@ -11,7 +11,7 @@ async function insertValuesIntoPgliteTable () {
   await createDatabase('pglite') // create database
 
   // connect to database
-  const db = await require('../../multi-db')({
+  const db = await require('../../multi-db-driver')({
     default: 'pglite',
     pglite: {
       config: {

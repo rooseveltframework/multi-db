@@ -1,11 +1,11 @@
 /* eslint-env mocha */
-process.env.MULTI_DB_CONFIG_FILE_SEARCH_ATTEMPTS = 1 // set config search attempts to 1 by default
+process.env.MULTI_DB_DRIVER_CONFIG_FILE_SEARCH_ATTEMPTS = 1 // set config search attempts to 1 by default
 const assert = require('assert')
 const fs = require('fs')
 const isDocker = process.argv.includes('--docker') || false
 const Logger = require('roosevelt-logger')
 const logger = new Logger()
-const multiDb = require('../multi-db')
+const multiDb = require('../multi-db-driver')
 const os = require('os')
 const path = require('path')
 const { spawnSync } = require('child_process')
@@ -73,15 +73,15 @@ process.on('SIGINT', () => {
 // CLI tests
 describe('CLI', function () {
   it('should run --create CLI script and create MariaDB user, database and table', async function () {
-    process.env.MULTI_DB_CONFIG_LOCATION = './test/configs/.mariadb-config.json' // env var for config location
+    process.env.MULTI_DB_DRIVER_CONFIG_LOCATION = './test/configs/.mariadb-config.json' // env var for config location
     const result = await createDatabase('mariadb', false, true) // create database
     await destroyDatabase('mariadb') // destroy database
-    delete process.env.MULTI_DB_CONFIG_LOCATION // delete env var
+    delete process.env.MULTI_DB_DRIVER_CONFIG_LOCATION // delete env var
     assert.equal(result, 'created') // check if result equals 'created'
   })
 
   it('should run --destroy CLI script and destroy MariaDB database', async function () {
-    process.env.MULTI_DB_CONFIG_LOCATION = './test/configs/.mariadb-config.json' // env var for config location
+    process.env.MULTI_DB_DRIVER_CONFIG_LOCATION = './test/configs/.mariadb-config.json' // env var for config location
     await createDatabase('mariadb') // create database
     const droppedDatabase = await destroyDatabase('mariadb') // destroy database
     if (isDocker) {
@@ -97,34 +97,34 @@ describe('CLI', function () {
       mariadbDbConfig.mariadb.adminConfig.port = 3306
       fs.writeFileSync(path.normalize('./test/configs/.mariadb-config.json'), JSON.stringify(mariadbDbConfig, null, 2))
     }
-    delete process.env.MULTI_DB_CONFIG_LOCATION // delete env var
+    delete process.env.MULTI_DB_DRIVER_CONFIG_LOCATION // delete env var
     assert.equal(result, 'destroyed') // check if result equals 'destroyed'
   })
 
   it('should run --file CLI script against a MariaDB database', async function () {
-    process.env.MULTI_DB_CONFIG_LOCATION = './test/configs/.mariadb-config.json' // env var for config location
+    process.env.MULTI_DB_DRIVER_CONFIG_LOCATION = './test/configs/.mariadb-config.json' // env var for config location
     await createDatabase('mariadb') // create database
     const result = await executeSqlFile('mariadb', './test/db/mariadb_and_mysql_file.sql', false, true) // execute SQL file; also test verbose logging
     await destroyDatabase('mariadb') // destroy database
-    delete process.env.MULTI_DB_CONFIG_LOCATION // delete env var
+    delete process.env.MULTI_DB_DRIVER_CONFIG_LOCATION // delete env var
     assert.equal(result, 'executed') // check if result equals 'executed'
   })
 
   it('should run --dump-schema CLI script and dump schema of connected MariaDB database to defined path', async function () {
-    process.env.MULTI_DB_CONFIG_LOCATION = './test/configs/.mariadb-config.json' // env var for config location
+    process.env.MULTI_DB_DRIVER_CONFIG_LOCATION = './test/configs/.mariadb-config.json' // env var for config location
     await createDatabase('mariadb') // create database
     const result = await dumpSchema('mariadb', './test/db/schema.sql') // dump schema
     await destroyDatabase('mariadb') // destroy database
-    delete process.env.MULTI_DB_CONFIG_LOCATION // delete env var
+    delete process.env.MULTI_DB_DRIVER_CONFIG_LOCATION // delete env var
     assert.equal(result, 'executed')
   })
 
   it('should run --dump-data CLI script and dump data connected MariaDB database to defined path', async function () {
-    process.env.MULTI_DB_CONFIG_LOCATION = './test/configs/.mariadb-config.json' // env var for config location
+    process.env.MULTI_DB_DRIVER_CONFIG_LOCATION = './test/configs/.mariadb-config.json' // env var for config location
     await createDatabase('mariadb') // create database
     const result = await dumpData('mariadb', './test/db/schema.sql') // dump data
     await destroyDatabase('mariadb') // destroy database
-    delete process.env.MULTI_DB_CONFIG_LOCATION // delete env var
+    delete process.env.MULTI_DB_DRIVER_CONFIG_LOCATION // delete env var
     assert.equal(result, 'executed')
   })
 
@@ -149,7 +149,7 @@ describe('CLI', function () {
     process.env.PATH = joinPathNoMysql
 
     // run dump schema script
-    process.env.MULTI_DB_CONFIG_LOCATION = './test/configs/.mariadb-config.json' // env var for config location
+    process.env.MULTI_DB_DRIVER_CONFIG_LOCATION = './test/configs/.mariadb-config.json' // env var for config location
     let result
     if (isDocker) {
       const mariadbConfig = JSON.parse(fs.readFileSync(path.normalize('./test/configs/.mariadb-config.json')))
@@ -168,7 +168,7 @@ describe('CLI', function () {
 
     process.env.PATH = pathEnv // reset PATH for rest of tests
     await destroyDatabase('mariadb') // destroy database
-    delete process.env.MULTI_DB_CONFIG_LOCATION // delete env var
+    delete process.env.MULTI_DB_DRIVER_CONFIG_LOCATION // delete env var
     assert.equal(result, 'error') // check if result equals 'error'
   })
 
@@ -181,17 +181,17 @@ describe('CLI', function () {
     await createDatabase('mysql') // create database
     const droppedDatabase = await destroyDatabase('mysql') // destroy database
     if (isDocker) {
-      const mySqlConfig = JSON.parse(fs.readFileSync(path.normalize('.multi-db-config.json')))
+      const mySqlConfig = JSON.parse(fs.readFileSync(path.normalize('.multi-db-driver-config.json')))
       mySqlConfig.mysql.config.port = 3307
       mySqlConfig.mysql.adminConfig.port = 3307
-      fs.writeFileSync(path.normalize('.multi-db-config.json'), JSON.stringify(mySqlConfig, null, 2))
+      fs.writeFileSync(path.normalize('.multi-db-driver-config.json'), JSON.stringify(mySqlConfig, null, 2))
     }
     const result = await destroyedDatabaseCheck('mysql', droppedDatabase) // destroy database
     if (isDocker) {
-      const mySqlConfig = JSON.parse(fs.readFileSync(path.normalize('.multi-db-config.json')))
+      const mySqlConfig = JSON.parse(fs.readFileSync(path.normalize('.multi-db-driver-config.json')))
       mySqlConfig.mysql.config.port = 3306
       mySqlConfig.mysql.adminConfig.port = 3306
-      fs.writeFileSync(path.normalize('.multi-db-config.json'), JSON.stringify(mySqlConfig, null, 2))
+      fs.writeFileSync(path.normalize('.multi-db-driver-config.json'), JSON.stringify(mySqlConfig, null, 2))
     }
     assert.equal(result, 'destroyed') // check if result equals 'destroyed'
   })
@@ -249,16 +249,16 @@ describe('CLI', function () {
     // run dump schema script
     let result
     if (isDocker) {
-      const mysqlConfig = JSON.parse(fs.readFileSync(path.normalize('.multi-db-config.json')))
+      const mysqlConfig = JSON.parse(fs.readFileSync(path.normalize('.multi-db-driver-config.json')))
       mysqlConfig.mysql.config.port = 3307
       mysqlConfig.mysql.adminConfig.port = 3307
-      fs.writeFileSync(path.normalize('.multi-db-config.json'), JSON.stringify(mysqlConfig, null, 2))
+      fs.writeFileSync(path.normalize('.multi-db-driver-config.json'), JSON.stringify(mysqlConfig, null, 2))
 
       result = await dumpSchema('mysql', './test/db/schema.sql', true)
 
       mysqlConfig.mysql.config.port = 3306
       mysqlConfig.mysql.adminConfig.port = 3306
-      fs.writeFileSync(path.normalize('.multi-db-config.json'), JSON.stringify(mysqlConfig, null, 2))
+      fs.writeFileSync(path.normalize('.multi-db-driver-config.json'), JSON.stringify(mysqlConfig, null, 2))
     } else {
       result = await dumpSchema('mysql', './test/db/schema.sql')
     }
@@ -296,17 +296,17 @@ describe('CLI', function () {
     await createDatabase('postgres') // create database
     const droppedDatabase = await destroyDatabase('postgres') // destroy database
     if (isDocker) {
-      const postgresConfig = JSON.parse(fs.readFileSync(path.normalize('.multi-db-config.json')))
+      const postgresConfig = JSON.parse(fs.readFileSync(path.normalize('.multi-db-driver-config.json')))
       postgresConfig.postgres.config.port = 5442
       postgresConfig.postgres.adminConfig.port = 5442
-      fs.writeFileSync(path.normalize('.multi-db-config.json'), JSON.stringify(postgresConfig, null, 2))
+      fs.writeFileSync(path.normalize('.multi-db-driver-config.json'), JSON.stringify(postgresConfig, null, 2))
     }
     const result = await destroyedDatabaseCheck('postgres', droppedDatabase)
     if (isDocker) {
-      const postgresConfig = JSON.parse(fs.readFileSync(path.normalize('.multi-db-config.json')))
+      const postgresConfig = JSON.parse(fs.readFileSync(path.normalize('.multi-db-driver-config.json')))
       postgresConfig.postgres.config.port = 5432
       postgresConfig.postgres.adminConfig.port = 5432
-      fs.writeFileSync(path.normalize('.multi-db-config.json'), JSON.stringify(postgresConfig, null, 2))
+      fs.writeFileSync(path.normalize('.multi-db-driver-config.json'), JSON.stringify(postgresConfig, null, 2))
     }
     assert.equal(result, 'destroyed') // check if result equals 'destroyed'
   })
@@ -363,16 +363,16 @@ describe('CLI', function () {
 
     let result
     if (isDocker) {
-      const postgresConfig = JSON.parse(fs.readFileSync(path.normalize('.multi-db-config.json')))
+      const postgresConfig = JSON.parse(fs.readFileSync(path.normalize('.multi-db-driver-config.json')))
       postgresConfig.postgres.config.port = 5442
       postgresConfig.postgres.adminConfig.port = 5442
-      fs.writeFileSync(path.normalize('.multi-db-config.json'), JSON.stringify(postgresConfig, null, 2))
+      fs.writeFileSync(path.normalize('.multi-db-driver-config.json'), JSON.stringify(postgresConfig, null, 2))
 
       result = await dumpSchema('postgres', './test/db/schema.sql', true)
 
       postgresConfig.postgres.config.port = 5432
       postgresConfig.postgres.adminConfig.port = 5432
-      fs.writeFileSync(path.normalize('.multi-db-config.json'), JSON.stringify(postgresConfig, null, 2))
+      fs.writeFileSync(path.normalize('.multi-db-driver-config.json'), JSON.stringify(postgresConfig, null, 2))
     } else {
       result = await dumpSchema('postgres', './test/db/schema.sql')
     }
@@ -437,23 +437,23 @@ describe('CLI', function () {
   })
 
   it('should run --create CLI script and print error due to undefined schema', async function () {
-    process.env.MULTI_DB_CONFIG_LOCATION = './test/configs/.multi-db-config-no-schema.json' // env var for config location
+    process.env.MULTI_DB_DRIVER_CONFIG_LOCATION = './test/configs/.multi-db-driver-config-no-schema.json' // env var for config location
     const result = await createDatabase('sqlite') // create database
-    delete process.env.MULTI_DB_CONFIG_LOCATION // delete env var
+    delete process.env.MULTI_DB_DRIVER_CONFIG_LOCATION // delete env var
     assert.equal(result, 'error') // check if result equals 'executed'
   })
 
   it('should run --create CLI script and print error due to invalid schema syntax', async function () {
-    process.env.MULTI_DB_CONFIG_LOCATION = './test/configs/.multi-db-config-invalid-schema.json' // env var for config location
+    process.env.MULTI_DB_DRIVER_CONFIG_LOCATION = './test/configs/.multi-db-driver-config-invalid-schema.json' // env var for config location
     const result = await createDatabase('sqlite') // create database
-    delete process.env.MULTI_DB_CONFIG_LOCATION // delete env var
+    delete process.env.MULTI_DB_DRIVER_CONFIG_LOCATION // delete env var
     assert.equal(result, 'error') // check if result equals 'executed'
   })
 
   it('should run --create CLI script and print error due to invalid schema file path', async function () {
-    process.env.MULTI_DB_CONFIG_LOCATION = './test/configs/.multi-db-config-invalid-schema-path.json' // env var for config location
+    process.env.MULTI_DB_DRIVER_CONFIG_LOCATION = './test/configs/.multi-db-driver-config-invalid-schema-path.json' // env var for config location
     const result = await createDatabase('sqlite') // create database
-    delete process.env.MULTI_DB_CONFIG_LOCATION // delete env var
+    delete process.env.MULTI_DB_DRIVER_CONFIG_LOCATION // delete env var
     assert.equal(result, 'error') // check if result equals 'executed'
   })
 
@@ -464,35 +464,35 @@ describe('CLI', function () {
   })
 })
 
-describe('multi-db', function () {
+describe('multi-db-driver', function () {
   it('should print error due to invalid config file', async function () {
-    process.env.MULTI_DB_CONFIG_LOCATION = './test/configs/invalid-config.txt' // env var for config location
+    process.env.MULTI_DB_DRIVER_CONFIG_LOCATION = './test/configs/invalid-config.txt' // env var for config location
     const result = await createDatabase('sqlite') // create database
-    delete process.env.MULTI_DB_CONFIG_LOCATION // delete env var
+    delete process.env.MULTI_DB_DRIVER_CONFIG_LOCATION // delete env var
     assert.equal(result, 'error') // check if invalid config was used and returns error
   })
 
   it('should print error due to invalid config path', async function () {
-    process.env.MULTI_DB_CONFIG_LOCATION = '.files/.alternate-config.json' // env var for config location
+    process.env.MULTI_DB_DRIVER_CONFIG_LOCATION = '.files/.alternate-config.json' // env var for config location
     const result = await createDatabase('sqlite') // create database
-    delete process.env.MULTI_DB_CONFIG_LOCATION // delete env var
+    delete process.env.MULTI_DB_DRIVER_CONFIG_LOCATION // delete env var
     assert.equal(result, 'error') // check if invalid config path was used and returns error
   })
 
   it('should print error due to config with no default value', async function () {
-    process.env.MULTI_DB_CONFIG_LOCATION = './test/configs/.invalid-config.json' // env var for config location
+    process.env.MULTI_DB_DRIVER_CONFIG_LOCATION = './test/configs/.invalid-config.json' // env var for config location
     const result = await createDatabase('sqlite') // create database
-    delete process.env.MULTI_DB_CONFIG_LOCATION // delete env var
+    delete process.env.MULTI_DB_DRIVER_CONFIG_LOCATION // delete env var
     assert.equal(result, 'error') // check if invalid config was used and returns error
   })
 
   it('should use env var for alternate config name and location', async function () {
-    process.env.MULTI_DB_CONFIG_LOCATION = './test/configs/.alternate-config.json' // env var for config location
+    process.env.MULTI_DB_DRIVER_CONFIG_LOCATION = './test/configs/.alternate-config.json' // env var for config location
     const altConfig = require('./configs/.alternate-config.json') // alternate config variable
     await createDatabase('sqlite') // create database
 
     // connect to database with loggerConfig
-    const db = await require('../multi-db')({
+    const db = await require('../multi-db-driver')({
       loggerConfig: {
         log: false,
         error: false,
@@ -500,14 +500,14 @@ describe('multi-db', function () {
       }
     })
 
-    delete process.env.MULTI_DB_CONFIG_LOCATION // delete env var
+    delete process.env.MULTI_DB_DRIVER_CONFIG_LOCATION // delete env var
     await db.endConnection() // end connection
     assert.equal(JSON.stringify(db.config[db.config.default]).trim(), JSON.stringify(altConfig[altConfig.default]).trim()) // check if alternate config was used in db connection
   })
 
   it('should go up 2 directories to find config', async function () {
     await createDatabase('sqlite') // create database
-    process.env.MULTI_DB_CONFIG_FILE_SEARCH_ATTEMPTS = null // set config search attempts to null
+    process.env.MULTI_DB_DRIVER_CONFIG_FILE_SEARCH_ATTEMPTS = null // set config search attempts to null
 
     // create nested folders
     if (!fs.existsSync(path.normalize(path.join(__dirname, '/nested-multi-db')))) {
@@ -516,7 +516,7 @@ describe('multi-db', function () {
       fs.mkdirSync(path.normalize(path.join(__dirname, '/nested-multi-db', '/nested-multi-db-2', '/nested-multi-db-3')))
     }
 
-    // create multi-db-config.json
+    // create multi-db-driver-config.json
     async function createConfig () {
       const configString = JSON.stringify({
         default: 'sqlite',
@@ -527,12 +527,12 @@ describe('multi-db', function () {
           schema: './test/db/pglite_postgres_and_sqlite_schema.sql'
         }
       }, null, 2)
-      const filePath = path.resolve(__dirname, 'nested-multi-db', '.multi-db-config.json') // Use path.resolve to go up 1 directories from the current directory
+      const filePath = path.resolve(__dirname, 'nested-multi-db', '.multi-db-driver-config.json') // Use path.resolve to go up 1 directories from the current directory
       fs.writeFileSync(path.normalize(filePath), configString)
     }
 
     await createConfig()
-    const nestedConfig = require('./nested-multi-db/.multi-db-config.json') // .multi-db-config.json in nested-multi-db dir
+    const nestedConfig = require('./nested-multi-db/.multi-db-driver-config.json') // .multi-db-driver-config.json in nested-multi-db dir
     process.chdir('./test/nested-multi-db/nested-multi-db-2/nested-multi-db-3') // change dir to nested-multi-db-3
 
     // connect to database with loggerConfig
@@ -546,7 +546,7 @@ describe('multi-db', function () {
 
     process.chdir('../../../../') // change dir back to multi-db
     await db.endConnection() // end connection
-    process.env.MULTI_DB_CONFIG_FILE_SEARCH_ATTEMPTS = 1 // reset search attempts env var
+    process.env.MULTI_DB_DRIVER_CONFIG_FILE_SEARCH_ATTEMPTS = 1 // reset search attempts env var
     assert.equal(JSON.stringify(db.config[db.config.default]).trim(), JSON.stringify(nestedConfig[nestedConfig.default]).trim()) // check if nested config was used in db connection
   })
 
@@ -554,7 +554,7 @@ describe('multi-db', function () {
     await createDatabase('sqlite') // create database
 
     // connect to database with loggerConfig
-    const db = await require('../multi-db')({
+    const db = await require('../multi-db-driver')({
       loggerConfig: {
         log: false,
         error: false,
@@ -575,7 +575,7 @@ describe('multi-db', function () {
     await createDatabase('sqlite') // create database
 
     // connect to database with loggerConfig
-    const db = await require('../multi-db')({
+    const db = await require('../multi-db-driver')({
       loggerConfig: {
         log: false,
         error: false,
@@ -596,7 +596,7 @@ describe('multi-db', function () {
     await createDatabase('sqlite') // create database
 
     // connect to database with loggerConfig
-    const db = await require('../multi-db')({
+    const db = await require('../multi-db-driver')({
       loggerConfig: {
         log: false,
         error: false,
@@ -706,7 +706,7 @@ describe('multi-db', function () {
     await createDatabase('postgres', 'localhost', 5432) // create database
 
     // connect to database
-    const db = await require('../multi-db')({
+    const db = await require('../multi-db-driver')({
       default: 'postgres',
       postgres: {
         config: {
@@ -771,15 +771,15 @@ describe('multi-db', function () {
 describe('MariaDB', function () {
   afterEach(async function () {
     await destroyDatabase('mariadb')
-    delete process.env.MULTI_DB_CONFIG_LOCATION // delete env var
+    delete process.env.MULTI_DB_DRIVER_CONFIG_LOCATION // delete env var
   })
 
   it('should insert values into table', async function () {
-    if (!isDocker) process.env.MULTI_DB_CONFIG_LOCATION = './test/configs/.mariadb-config.json' // env var for config location
+    if (!isDocker) process.env.MULTI_DB_DRIVER_CONFIG_LOCATION = './test/configs/.mariadb-config.json' // env var for config location
     await createDatabase('mariadb') // create database
 
     // connect to database
-    const db = await require('../multi-db')({
+    const db = await require('../multi-db-driver')({
       default: 'mariadb',
       mariadb: {
         config: {
@@ -820,11 +820,11 @@ describe('MariaDB', function () {
   })
 
   it('should insert array of objects into table using a transaction', async function () {
-    if (!isDocker) process.env.MULTI_DB_CONFIG_LOCATION = './test/configs/.mariadb-config.json' // env var for config location
+    if (!isDocker) process.env.MULTI_DB_DRIVER_CONFIG_LOCATION = './test/configs/.mariadb-config.json' // env var for config location
     await createDatabase('mariadb') // create database
 
     // connect to database
-    const db = await require('../multi-db')({
+    const db = await require('../multi-db-driver')({
       default: 'mariadb',
       mariadb: {
         config: {
@@ -863,11 +863,11 @@ describe('MariaDB', function () {
   })
 
   it('should delete all values from table', async function () {
-    if (!isDocker) process.env.MULTI_DB_CONFIG_LOCATION = './test/configs/.mariadb-config.json' // env var for config location
+    if (!isDocker) process.env.MULTI_DB_DRIVER_CONFIG_LOCATION = './test/configs/.mariadb-config.json' // env var for config location
     await createDatabase('mariadb') // create database
 
     // connect to database
-    const db = await require('../multi-db')({
+    const db = await require('../multi-db-driver')({
       default: 'mariadb',
       mariadb: {
         config: {
@@ -907,11 +907,11 @@ describe('MariaDB', function () {
   })
 
   it('should roll back transaction due to error', async function () {
-    if (!isDocker) process.env.MULTI_DB_CONFIG_LOCATION = './test/configs/.mariadb-config.json' // env var for config location
+    if (!isDocker) process.env.MULTI_DB_DRIVER_CONFIG_LOCATION = './test/configs/.mariadb-config.json' // env var for config location
     await createDatabase('mariadb') // create database
 
     // connect to database
-    const db = await require('../multi-db')({
+    const db = await require('../multi-db-driver')({
       default: 'mariadb',
       mariadb: {
         config: {
@@ -950,7 +950,7 @@ describe('MariaDB', function () {
   })
 
   it('should print errors due to invalid SQL syntax', async function () {
-    if (!isDocker) process.env.MULTI_DB_CONFIG_LOCATION = './test/configs/.mariadb-config.json' // env var for config location
+    if (!isDocker) process.env.MULTI_DB_DRIVER_CONFIG_LOCATION = './test/configs/.mariadb-config.json' // env var for config location
     await createDatabase('mariadb') // create database
 
     // run query with invalid syntax
@@ -993,7 +993,7 @@ describe('MariaDB', function () {
     }
 
     // connect to database
-    const db = await require('../multi-db')({
+    const db = await require('../multi-db-driver')({
       default: 'mariadb',
       mariadb: {
         config: {
@@ -1316,7 +1316,7 @@ describe('PostgreSQL', function () {
     await createDatabase('postgres') // create database
 
     // connect to database
-    const db = await require('../multi-db')({
+    const db = await require('../multi-db-driver')({
       default: 'postgres',
       postgres: {
         config: {
@@ -1363,7 +1363,7 @@ describe('PostgreSQL', function () {
     await createDatabase('postgres') // create database
 
     // connect to database
-    const db = await require('../multi-db')({
+    const db = await require('../multi-db-driver')({
       default: 'postgres',
       postgres: {
         config: {
@@ -1408,7 +1408,7 @@ describe('PostgreSQL', function () {
     await createDatabase('postgres') // create database
 
     // connect to database
-    const db = await require('../multi-db')({
+    const db = await require('../multi-db-driver')({
       default: 'postgres',
       postgres: {
         config: {
@@ -1453,7 +1453,7 @@ describe('PostgreSQL', function () {
     await createDatabase('postgres') // create database
 
     // connect to database
-    const db = await require('../multi-db')({
+    const db = await require('../multi-db-driver')({
       default: 'postgres',
       postgres: {
         config: {
@@ -1573,7 +1573,7 @@ describe('SQLite', function () {
     await createDatabase('sqlite') // create database
 
     // connect to database
-    const db = await require('../multi-db')({
+    const db = await require('../multi-db-driver')({
       default: 'sqlite',
       sqlite: {
         config: {
@@ -1604,7 +1604,7 @@ describe('SQLite', function () {
     await createDatabase('sqlite') // create database
 
     // connect to database
-    const db = await require('../multi-db')({
+    const db = await require('../multi-db-driver')({
       default: 'sqlite',
       sqlite: {
         config: {
@@ -1635,7 +1635,7 @@ describe('SQLite', function () {
     await createDatabase('sqlite') // create database
 
     // connect to database
-    const db = await require('../multi-db')({
+    const db = await require('../multi-db-driver')({
       default: 'sqlite',
       sqlite: {
         config: {

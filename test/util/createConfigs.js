@@ -2,8 +2,8 @@ const fs = require('fs')
 const path = require('path')
 
 module.exports = () => {
-  // create .multi-db-config.json in root directory
-  fs.writeFileSync(path.normalize(path.resolve(__dirname, '../..', '.multi-db-config.json')), JSON.stringify({
+  // create .multi-db-driver-config.json in root directory
+  fs.writeFileSync(path.normalize(path.resolve(__dirname, '../..', '.multi-db-driver-config.json')), JSON.stringify({
     default: '',
     mysql: {
       config: {
@@ -106,7 +106,7 @@ module.exports = () => {
         schema: './test/db/pglite_postgres_and_sqlite_schema.sql'
       }
     }, null, 2))
-    fs.writeFileSync(path.normalize(path.resolve(__dirname, '../configs', '.multi-db-config-no-schema.json')), JSON.stringify({
+    fs.writeFileSync(path.normalize(path.resolve(__dirname, '../configs', '.multi-db-driver-config-no-schema.json')), JSON.stringify({
       default: 'postgres',
       postgres: {
         config: {
@@ -125,7 +125,7 @@ module.exports = () => {
         }
       }
     }, null, 2))
-    fs.writeFileSync(path.normalize(path.resolve(__dirname, '../configs', '.multi-db-config-invalid-schema.json')), JSON.stringify({
+    fs.writeFileSync(path.normalize(path.resolve(__dirname, '../configs', '.multi-db-driver-config-invalid-schema.json')), JSON.stringify({
       default: 'postgres',
       postgres: {
         config: {
@@ -145,7 +145,7 @@ module.exports = () => {
         schema: './test/db/invalid_schema.sql'
       }
     }, null, 2))
-    fs.writeFileSync(path.normalize(path.resolve(__dirname, '../configs', '.multi-db-config-invalid-schema-path.json')), JSON.stringify({
+    fs.writeFileSync(path.normalize(path.resolve(__dirname, '../configs', '.multi-db-driver-config-invalid-schema-path.json')), JSON.stringify({
       default: 'sqlite',
       sqlite: {
         config: {
