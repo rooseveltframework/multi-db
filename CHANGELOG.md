@@ -1,4 +1,4 @@
-## 1.0.3
+## 1.1.0
 
 - Changed all instances of multi-db, MULTI_DB, etc to multi-db-driver, MULTI_DB_DRIVER, etc for clarity.
 
