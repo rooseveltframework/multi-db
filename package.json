@@ -5,11 +5,11 @@
   "contributors": [
     {
       "name": "Contributors",
-      "url": "https://github.com/rooseveltframework/multi-db/graphs/contributors"
+      "url": "https://github.com/rooseveltframework/multi-db-driver/graphs/contributors"
     }
   ],
   "version": "1.1.0",
-  "homepage": "https://rooseveltframework.org/docs/multi-db/latest",
+  "homepage": "https://rooseveltframework.org/docs/multi-db-driver/latest",
   "license": "CC-BY-4.0",
   "main": "multi-db-driver.js",
   "engines": {
@@ -44,7 +44,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "git://github.com/rooseveltframework/multi-db.git"
+    "url": "git://github.com/rooseveltframework/multi-db-driver.git"
   },
   "keywords": [
     "multi",

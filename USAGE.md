@@ -10,29 +10,29 @@ List of currently-supported database drivers:
 - [pglite](https://www.npmjs.com/package/@electric-sql/pglite) for PGlite.
 - [better-sqlite3](https://www.npmjs.com/package/better-sqlite3) for SQLite.
 
-Then mark the `multi-db-driver` npm package as a dependency in your app as well. Multi-DB-Driver is generally designed to work with the latest version of each supported database driver.
+Then mark the `multi-db-driver` npm package as a dependency in your app as well. Multi-DB Driver is generally designed to work with the latest version of each supported database driver.
 
-Then you can configure Multi-DB-Driver and connect to your database.
+Then you can configure Multi-DB Driver and connect to your database.
 
-## Connect to a database using Multi-DB-Driver
+## Connect to a database using Multi-DB Driver
 
 ```javascript
 const db = await require('multi-db-driver')(config)
 ```
 
-If you do not supply a `config` object in the constructor, Multi-DB-Driver will attempt to load your config from a `.multi-db-driver-config.json` file that should most commonly be placed in the root directory of your app.
+If you do not supply a `config` object in the constructor, Multi-DB Driver will attempt to load your config from a `.multi-db-driver-config.json` file that should most commonly be placed in the root directory of your app.
 
-Multi-DB-Driver will look for that file in up to 3 directories above where the Multi-DB-Driver module is located (e.g. looking at parent directories starting with node_modules). You can change this behavior by setting the `MULTI_DB_DRIVER_CONFIG_FILE_SEARCH_ATTEMPTS` environment variable to a number other than 3. The default value of 3 will in most circumstances include the root directory of your app as one of the locations that will be searched for your Multi-DB-Driver config, which is why it's the default value.
+Multi-DB Driver will look for that file in up to 3 directories above where the Multi-DB Driver module is located (e.g. looking at parent directories starting with node_modules). You can change this behavior by setting the `MULTI_DB_DRIVER_CONFIG_FILE_SEARCH_ATTEMPTS` environment variable to a number other than 3. The default value of 3 will in most circumstances include the root directory of your app as one of the locations that will be searched for your Multi-DB Driver config, which is why it's the default value.
 
 If you want to set a location for the config file manually, then set the `MULTI_DB_DRIVER_CONFIG_LOCATION` environment variable to the absolute path on your filesystem to where your config is.
 
 It is recommended that you add `.multi-db-driver-config.json` to your .gitignore as well because it will typically contain database credentials.
 
-See "Configuration" for information about how to set up a Multi-DB-Driver config.
+See "Configuration" for information about how to set up a Multi-DB Driver config.
 
 ## Performing database queries
 
-The below examples show how to use Multi-DB-Driver to query your database(s) from the simplest usage to the most complex, demonstrating how this module focuses on adding complexity only when needed as a progressive enhancement atop simpler, more concise syntax.
+The below examples show how to use Multi-DB Driver to query your database(s) from the simplest usage to the most complex, demonstrating how this module focuses on adding complexity only when needed as a progressive enhancement atop simpler, more concise syntax.
 
 ### Example of one universal query that works with any database you set in your config
 
@@ -100,11 +100,11 @@ This supplies an object instead of a string to the query argument.
 
 It also combines all the other above features too, showing a maximally featureful and flexible version of the query method.
 
-By default Multi-DB-Driver will rewrite the query under the hood to use `$1` instead of `?` for queries being executed against PostgreSQL and PGlite. You can disable this behavior by setting `questionMarkParamsForPostgres` to `false` in your Multi-DB-Driver config, or by setting `disableQuestionMarkParamsForPostgres` to `true` at the query level in the query object.
+By default Multi-DB Driver will rewrite the query under the hood to use `$1` instead of `?` for queries being executed against PostgreSQL and PGlite. You can disable this behavior by setting `questionMarkParamsForPostgres` to `false` in your Multi-DB Driver config, or by setting `disableQuestionMarkParamsForPostgres` to `true` at the query level in the query object.
 
 ## CLI scripts
 
-This module also comes with a `cli.js` file to automate common database setup and teardown tasks. It will load your Multi-DB-Driver config and connect to the database using the `adminConfig` to perform these tasks.
+This module also comes with a `cli.js` file to automate common database setup and teardown tasks. It will load your Multi-DB Driver config and connect to the database using the `adminConfig` to perform these tasks.
 
 The `cli.js` file supports the following commands:
 
