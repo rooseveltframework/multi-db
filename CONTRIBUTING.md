@@ -1,4 +1,4 @@
-## Writing code for multi-db-driver
+## Writing code for Multi-DB Driver
 
 Here's how to set up a development environment to hack on `multi-db-driver`'s code and run the tests:
 
