@@ -28,11 +28,11 @@ async function init () {
 
   if (config.default !== 'pglite' && config.default !== 'sqlite') {
     db = Object.keys(loggerConfig).length > 0
-      ? await require('./multi-db')({
+      ? await require('./multi-db-driver')({
         admin: true,
         loggerConfig
       })
-      : await require('./multi-db')({
+      : await require('./multi-db-driver')({
         admin: true
       })
     logger.verbose('db:', db)
@@ -51,11 +51,11 @@ async function init () {
         const oldDb = dbConfig.database
         logger.log('🦺', 'Attempting to connect with regular (non-admin) credentials instead...')
         db = Object.keys(loggerConfig).length > 0
-          ? await require('./multi-db')({
+          ? await require('./multi-db-driver')({
             admin: false, // execute the file against regular credentials, not admin credentials
             loggerConfig
           })
-          : await require('./multi-db')({
+          : await require('./multi-db-driver')({
             admin: false // execute the file against regular credentials, not admin credentials
           })
         if (oldUser === config[config.default].config.user && oldDb === config[config.default].config.database) {
@@ -64,10 +64,10 @@ async function init () {
       } else {
         if (fs.existsSync(path.normalize(dbConfig.database))) {
           db = Object.keys(loggerConfig).length > 0
-            ? await require('./multi-db')({
+            ? await require('./multi-db-driver')({
               loggerConfig
             })
-            : await require('./multi-db')()
+            : await require('./multi-db-driver')()
           logger.verbose('db:', db)
         }
       }
@@ -196,11 +196,11 @@ Proceed? 🤔`
       await db.query('create database ' + dbConfig.database + ' with owner ' + dbConfig.user)
     }
     db = Object.keys(loggerConfig).length > 0
-      ? await require('./multi-db')({
+      ? await require('./multi-db-driver')({
         admin: false, // reconnecting without admin credentials
         loggerConfig
       })
-      : await require('./multi-db')({
+      : await require('./multi-db-driver')({
         admin: false // reconnecting without admin credentials
       })
     if (config.default === 'pglite' || config.default === 'sqlite') logger.verbose('db:', db)
@@ -241,28 +241,28 @@ Proceed? 🤔`
       if (config.default === 'mariadb') {
         configDefault = 'MariaDB'
         // create temperary mysqlpassword.cnf file to source password from while running mysqldump command
-        fs.writeFileSync(path.normalize(path.resolve(__dirname, 'multi-db-mysql-dump-password.cnf')), `[mysqldump]
+        fs.writeFileSync(path.normalize(path.resolve(__dirname, 'multi-db-driver-mysql-dump-password.cnf')), `[mysqldump]
         # The following password will be sent to mysqldump 
         password="${dbConfig.password}"
         `)
-        schemaDump = spawnSync('mysqldump', [`--defaults-extra-file=${path.normalize(path.join(__dirname, 'multi-db-mysql-dump-password.cnf'))}`, '--no-data', '-u', `${dbConfig.user}`, `${dbConfig.database}`, '-r', `${filePath}`], { shell: false })
-        if (fs.existsSync(path.normalize(path.join(__dirname, 'multi-db-mysql-dump-password.cnf')))) fs.unlinkSync(path.normalize(path.join(__dirname, 'multi-db-mysql-dump-password.cnf'))) // remove mysqlpassword.cnf file
+        schemaDump = spawnSync('mysqldump', [`--defaults-extra-file=${path.normalize(path.join(__dirname, 'multi-db-driver-mysql-dump-password.cnf'))}`, '--no-data', '-u', `${dbConfig.user}`, `${dbConfig.database}`, '-r', `${filePath}`], { shell: false })
+        if (fs.existsSync(path.normalize(path.join(__dirname, 'multi-db-driver-mysql-dump-password.cnf')))) fs.unlinkSync(path.normalize(path.join(__dirname, 'multi-db-driver-mysql-dump-password.cnf'))) // remove mysqlpassword.cnf file
       } else if (config.default === 'mysql') {
         configDefault = 'MySQL'
         // create temperary mysqlpassword.cnf file to source password from while running mysqldump command
-        fs.writeFileSync(path.normalize(path.resolve(__dirname, 'multi-db-mysql-dump-password.cnf')), `[mysqldump]
+        fs.writeFileSync(path.normalize(path.resolve(__dirname, 'multi-db-driver-mysql-dump-password.cnf')), `[mysqldump]
         # The following password will be sent to mysqldump 
         password="${dbConfig.password}"
         `)
-        schemaDump = spawnSync('mysqldump', [`--defaults-extra-file=${path.normalize(path.join(__dirname, 'multi-db-mysql-dump-password.cnf'))}`, '--no-data', '-u', `${dbConfig.user}`, `${dbConfig.database}`, '-r', `${filePath}`], { shell: false })
-        if (fs.existsSync(path.normalize(path.join(__dirname, 'multi-db-mysql-dump-password.cnf')))) fs.unlinkSync(path.normalize(path.join(__dirname, 'multi-db-mysql-dump-password.cnf'))) // remove mysqlpassword.cnf file
+        schemaDump = spawnSync('mysqldump', [`--defaults-extra-file=${path.normalize(path.join(__dirname, 'multi-db-driver-mysql-dump-password.cnf'))}`, '--no-data', '-u', `${dbConfig.user}`, `${dbConfig.database}`, '-r', `${filePath}`], { shell: false })
+        if (fs.existsSync(path.normalize(path.join(__dirname, 'multi-db-driver-mysql-dump-password.cnf')))) fs.unlinkSync(path.normalize(path.join(__dirname, 'multi-db-driver-mysql-dump-password.cnf'))) // remove mysqlpassword.cnf file
       } else if (config.default === 'postgres') {
         configDefault = 'PostgreSQL'
-        fs.writeFileSync(path.normalize(path.resolve(__dirname, '.multi-db-pg-dump-config')), `${dbConfig.host}:${dbConfig.port}:${dbConfig.database}:${dbConfig.user}:${dbConfig.password}`) // create temperary .pgpass file to source password from while running pg_dump command
-        fs.chmodSync(path.normalize(path.resolve(__dirname, '.multi-db-pg-dump-config')), '0600') // give .pgpass file read + write permissions
-        process.env.PGPASSFILE = path.normalize(path.resolve(__dirname, '.multi-db-pg-dump-config')) // set PGPASSFILE env var to .pgpass file that was created
+        fs.writeFileSync(path.normalize(path.resolve(__dirname, '.multi-db-driver-pg-dump-config')), `${dbConfig.host}:${dbConfig.port}:${dbConfig.database}:${dbConfig.user}:${dbConfig.password}`) // create temperary .pgpass file to source password from while running pg_dump command
+        fs.chmodSync(path.normalize(path.resolve(__dirname, '.multi-db-driver-pg-dump-config')), '0600') // give .pgpass file read + write permissions
+        process.env.PGPASSFILE = path.normalize(path.resolve(__dirname, '.multi-db-driver-pg-dump-config')) // set PGPASSFILE env var to .pgpass file that was created
         schemaDump = spawnSync('pg_dump', ['--schema-only', '-U', `${dbConfig.user}`, '-h', `${dbConfig.host}`, '-d', `${dbConfig.database}`, '-f', `${filePath}`], { shell: false })
-        if (fs.existsSync(path.normalize(path.join(__dirname, '.multi-db-pg-dump-config')))) fs.unlinkSync(path.normalize(path.join(__dirname, '.multi-db-pg-dump-config'))) // remove .pgpass file
+        if (fs.existsSync(path.normalize(path.join(__dirname, '.multi-db-driver-pg-dump-config')))) fs.unlinkSync(path.normalize(path.join(__dirname, '.multi-db-driver-pg-dump-config'))) // remove .pgpass file
       } else if (config.default === 'sqlite') {
         configDefault = 'SQLite'
         schemaDump = spawnSync('sqlite3', [`${dbConfig.database}`, '.schema'], { shell: false })
@@ -285,28 +285,28 @@ Proceed? 🤔`
       if (config.default === 'mariadb') {
         configDefault = 'MariaDB'
         // create temperary mysqlpassword.cnf file to source password from while running mysqldump command
-        fs.writeFileSync(path.normalize(path.resolve(__dirname, 'multi-db-mysql-dump-password.cnf')), `[mysqldump]
+        fs.writeFileSync(path.normalize(path.resolve(__dirname, 'multi-db-driver-mysql-dump-password.cnf')), `[mysqldump]
         # The following password will be sent to mysqldump 
         password="${dbConfig.password}"
         `)
-        dataDump = spawnSync('mysqldump', [`--defaults-extra-file=${path.normalize(path.join(__dirname, 'multi-db-mysql-dump-password.cnf'))}`, '-u', `${dbConfig.user}`, `${dbConfig.database}`, '-r', `${filePath}`], { shell: false })
-        if (fs.existsSync(path.normalize(path.join(__dirname, 'multi-db-mysql-dump-password.cnf')))) fs.unlinkSync(path.normalize(path.join(__dirname, 'multi-db-mysql-dump-password.cnf'))) // remove mysqlpassword.cnf file
+        dataDump = spawnSync('mysqldump', [`--defaults-extra-file=${path.normalize(path.join(__dirname, 'multi-db-driver-mysql-dump-password.cnf'))}`, '-u', `${dbConfig.user}`, `${dbConfig.database}`, '-r', `${filePath}`], { shell: false })
+        if (fs.existsSync(path.normalize(path.join(__dirname, 'multi-db-driver-mysql-dump-password.cnf')))) fs.unlinkSync(path.normalize(path.join(__dirname, 'multi-db-driver-mysql-dump-password.cnf'))) // remove mysqlpassword.cnf file
       } else if (config.default === 'mysql') {
         configDefault = 'MySQL'
         // create temperary mysqlpassword.cnf file to source password from while running mysqldump command
-        fs.writeFileSync(path.normalize(path.resolve(__dirname, 'multi-db-mysql-dump-password.cnf')), `[mysqldump]
+        fs.writeFileSync(path.normalize(path.resolve(__dirname, 'multi-db-driver-mysql-dump-password.cnf')), `[mysqldump]
         # The following password will be sent to mysqldump 
         password="${dbConfig.password}"
         `)
-        dataDump = spawnSync('mysqldump', [`--defaults-extra-file=${path.normalize(path.join(__dirname, 'multi-db-mysql-dump-password.cnf'))}`, '-u', `${dbConfig.user}`, `${dbConfig.database}`, '-r', `${filePath}`], { shell: false })
-        if (fs.existsSync(path.normalize(path.join(__dirname, 'multi-db-mysql-dump-password.cnf')))) fs.unlinkSync(path.normalize(path.join(__dirname, 'multi-db-mysql-dump-password.cnf'))) // remove mysqlpassword.cnf file
+        dataDump = spawnSync('mysqldump', [`--defaults-extra-file=${path.normalize(path.join(__dirname, 'multi-db-driver-mysql-dump-password.cnf'))}`, '-u', `${dbConfig.user}`, `${dbConfig.database}`, '-r', `${filePath}`], { shell: false })
+        if (fs.existsSync(path.normalize(path.join(__dirname, 'multi-db-driver-mysql-dump-password.cnf')))) fs.unlinkSync(path.normalize(path.join(__dirname, 'multi-db-driver-mysql-dump-password.cnf'))) // remove mysqlpassword.cnf file
       } else if (config.default === 'postgres') {
         configDefault = 'PostgreSQL'
-        fs.writeFileSync(path.normalize(path.resolve(__dirname, '.multi-db-pg-dump-config')), `${dbConfig.host}:${dbConfig.port}:${dbConfig.database}:${dbConfig.user}:${dbConfig.password}`) // create temperary .pgpass file to source password from while running pg_dump command
-        fs.chmodSync(path.normalize(path.resolve(__dirname, '.multi-db-pg-dump-config')), '0600') // give .pgpass file read + write permissions
-        process.env.PGPASSFILE = path.normalize(path.resolve(__dirname, '.multi-db-pg-dump-config')) // set PGPASSFILE env var to .pgpass file that was created
+        fs.writeFileSync(path.normalize(path.resolve(__dirname, '.multi-db-driver-pg-dump-config')), `${dbConfig.host}:${dbConfig.port}:${dbConfig.database}:${dbConfig.user}:${dbConfig.password}`) // create temperary .pgpass file to source password from while running pg_dump command
+        fs.chmodSync(path.normalize(path.resolve(__dirname, '.multi-db-driver-pg-dump-config')), '0600') // give .pgpass file read + write permissions
+        process.env.PGPASSFILE = path.normalize(path.resolve(__dirname, '.multi-db-driver-pg-dump-config')) // set PGPASSFILE env var to .pgpass file that was created
         dataDump = spawnSync('pg_dump', ['-U', `${dbConfig.user}`, '-d', `${dbConfig.database}`, '-f', `${filePath}`], { shell: false })
-        if (fs.existsSync(path.normalize(path.join(__dirname, '.multi-db-pg-dump-config')))) fs.unlinkSync(path.normalize(path.join(__dirname, '.multi-db-pg-dump-config'))) // remove .pgpass file
+        if (fs.existsSync(path.normalize(path.join(__dirname, '.multi-db-driver-pg-dump-config')))) fs.unlinkSync(path.normalize(path.join(__dirname, '.multi-db-driver-pg-dump-config'))) // remove .pgpass file
       } else if (config.default === 'sqlite') {
         configDefault = 'SQLite'
         dataDump = spawnSync('sqlite3', [`${dbConfig.database}`, '.dump'], { shell: false })
@@ -325,13 +325,13 @@ Proceed? 🤔`
   async function dumpErrorMessages () {
     if (config.default === 'mariadb') {
       logger.error('🦭', 'Please make sure the mysqldump command is in your PATH.')
-      if (fs.existsSync(path.normalize(path.join(__dirname, 'multi-db-mysql-dump-password.cnf')))) fs.unlinkSync(path.normalize(path.join(__dirname, 'multi-db-mysql-dump-password.cnf')))
+      if (fs.existsSync(path.normalize(path.join(__dirname, 'multi-db-driver-mysql-dump-password.cnf')))) fs.unlinkSync(path.normalize(path.join(__dirname, 'multi-db-driver-mysql-dump-password.cnf')))
     } else if (config.default === 'mysql') {
       logger.error('🐬', 'Please make sure the mysqldump command is in your PATH.')
-      if (fs.existsSync(path.normalize(path.join(__dirname, 'multi-db-mysql-dump-password.cnf')))) fs.unlinkSync(path.normalize(path.join(__dirname, 'multi-db-mysql-dump-password.cnf')))
+      if (fs.existsSync(path.normalize(path.join(__dirname, 'multi-db-driver-mysql-dump-password.cnf')))) fs.unlinkSync(path.normalize(path.join(__dirname, 'multi-db-driver-mysql-dump-password.cnf')))
     } else if (config.default === 'postgres') {
       logger.error('🐘', 'Please make sure the pg_dump command is in your PATH.')
-      if (fs.existsSync(path.normalize(path.join(__dirname, '.multi-db-pg-dump-config')))) fs.unlinkSync(path.normalize(path.join(__dirname, '.multi-db-pg-dump-config')))
+      if (fs.existsSync(path.normalize(path.join(__dirname, '.multi-db-driver-pg-dump-config')))) fs.unlinkSync(path.normalize(path.join(__dirname, '.multi-db-driver-pg-dump-config')))
     } else if (config.default === 'sqlite') {
       logger.error('🪶', 'Please make sure the sqlite3 command is in your PATH.')
     }

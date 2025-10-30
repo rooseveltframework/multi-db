@@ -1,6 +1,6 @@
-## Writing code for multi-db
+## Writing code for multi-db-driver
 
-Here's how to set up a development environment to hack on `multi-db`'s code and run the tests:
+Here's how to set up a development environment to hack on `multi-db-driver`'s code and run the tests:
 
 ### Run the tests with Docker
 

@@ -4,12 +4,12 @@ const path = require('path')
 const { spawn } = require('child_process')
 
 module.exports = async (db, schemaPath, bypassDocker) => {
-  const data = JSON.parse(fs.readFileSync(path.normalize('.multi-db-config.json')))
+  const data = JSON.parse(fs.readFileSync(path.normalize('.multi-db-driver-config.json')))
 
   if (db) data.default = db
 
   // override default in config
-  fs.writeFileSync(path.normalize('.multi-db-config.json'), JSON.stringify(data, null, 2))
+  fs.writeFileSync(path.normalize('.multi-db-driver-config.json'), JSON.stringify(data, null, 2))
 
   const executeDumpSchemaChildProcess = isDocker && !bypassDocker ? spawn('docker', ['exec', '-i', `${db}-multidb-tests`, 'bin/bash', '-c', `cd multi-db && node cli.js --dump-schema ${schemaPath}`], { shell: false }) : spawn('node', ['cli.js', '--dump-schema', schemaPath], { shell: false }) // run node cli.js --dump-schema schemaPath as a child process
   executeDumpSchemaChildProcess.stdin.setEncoding('utf-8')

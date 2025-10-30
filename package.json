@@ -8,27 +8,27 @@
       "url": "https://github.com/rooseveltframework/multi-db/graphs/contributors"
     }
   ],
-  "version": "1.0.2",
+  "version": "1.1.0",
   "homepage": "https://rooseveltframework.org/docs/multi-db/latest",
   "license": "CC-BY-4.0",
-  "main": "multi-db.js",
+  "main": "multi-db-driver.js",
   "engines": {
     "node": ">=20.0.0"
   },
   "dependencies": {
-    "fs-extra": "11.3.0",
-    "node-sql-parser": "5.3.10",
+    "fs-extra": "11.3.2",
+    "node-sql-parser": "5.3.13",
     "roosevelt-logger": "1.0.1",
     "yesno": "0.4.0"
   },
   "devDependencies": {
-    "@electric-sql/pglite": "0.3.3",
-    "better-sqlite3": "12.1.1",
+    "@electric-sql/pglite": "0.3.11",
+    "better-sqlite3": "12.4.1",
     "c8": "10.1.3",
-    "mariadb": "3.4.2",
-    "mocha": "11.7.1",
-    "mysql2": "3.14.1",
-    "pg": "8.16.2",
+    "mariadb": "3.4.5",
+    "mocha": "11.7.4",
+    "mysql2": "3.15.3",
+    "pg": "8.16.3",
     "standard": "17.1.2"
   },
   "mocha": {

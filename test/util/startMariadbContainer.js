@@ -4,7 +4,7 @@ const { spawnSync } = require('child_process')
 module.exports = async () => {
   const multiDbPath = path.join(__dirname, '../..')
 
-  spawnSync('docker', ['run', '--name', 'mariadb-multidb-tests', '-e', 'MYSQL_ROOT_PASSWORD=password', '-e', 'MULTI_DB_CONFIG_LOCATION=./test/configs/.mariadb-config.json', '-e', 'MYSQL_USER=mariadb_multi_db_tests_user', '-e', 'MYSQL_PASSWORD=mariadb_multi_db_tests_password', '-e', 'MYSQL_DATABASE=mariadb_multi_db_tests_database', '-p', '3317:3306', '-v', `${multiDbPath}:/multi-db`, '-v', `${multiDbPath}/coverage:/multi-db/coverage`, '-d', 'mariadb:10.5'], { shell: false })
+  spawnSync('docker', ['run', '--name', 'mariadb-multidb-tests', '-e', 'MYSQL_ROOT_PASSWORD=password', '-e', 'MULTI_DB_DRIVER_CONFIG_LOCATION=./test/configs/.mariadb-config.json', '-e', 'MYSQL_USER=mariadb_multi_db_tests_user', '-e', 'MYSQL_PASSWORD=mariadb_multi_db_tests_password', '-e', 'MYSQL_DATABASE=mariadb_multi_db_tests_database', '-p', '3317:3306', '-v', `${multiDbPath}:/multi-db`, '-v', `${multiDbPath}/coverage:/multi-db/coverage`, '-d', 'mariadb:10.5'], { shell: false })
 
   return new Promise((resolve, reject) => {
     const check = async (retry = 0) => {

@@ -170,8 +170,9 @@ temp/
 
 .npmrc
 
-multi-db-mysql-dump-password.cnf
-.multi-db-config.json
+multi-db-driver-mysql-dump-password.cnf
+.multi-db-driver-pg-dump-config
+.multi-db-driver-config.json
 .npm-cache
 test/configs
 test/db

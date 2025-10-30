@@ -4,12 +4,12 @@ const path = require('path')
 const { spawn } = require('child_process')
 
 module.exports = async (db, suppressLogs, enableVerbose) => {
-  const data = JSON.parse(fs.readFileSync(path.normalize('.multi-db-config.json')))
+  const data = JSON.parse(fs.readFileSync(path.normalize('.multi-db-driver-config.json')))
 
   if (db) data.default = db
 
   // override default in config
-  fs.writeFileSync(path.normalize('.multi-db-config.json'), JSON.stringify(data, null, 2))
+  fs.writeFileSync(path.normalize('.multi-db-driver-config.json'), JSON.stringify(data, null, 2))
 
   let createDatabaseChildProcess
   if (suppressLogs) createDatabaseChildProcess = isDocker && (db !== 'pglite' && db !== 'sqlite') ? spawn('docker', ['exec', '-i', `${db}-multidb-tests`, 'bin/bash', '-c', 'cd multi-db && node cli.js --create --suppress-logs --suppress-errors'], { shell: false }) : spawn('node', ['cli.js', '--create', '--suppress-logs', '--suppress-errors'], { shell: false }) // run node cli.js --create as a child process with suppress-logger flags
