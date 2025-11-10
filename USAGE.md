@@ -20,13 +20,13 @@ Then you can configure Multi-DB Driver and connect to your database.
 const db = await require('multi-db-driver')(config)
 ```
 
-If you do not supply a `config` object in the constructor, Multi-DB Driver will attempt to load your config from a `.multi-db-driver-config.json` file that should most commonly be placed in the root directory of your app.
+If you do not supply a `config` object in the constructor, Multi-DB Driver will attempt to load your config from either a `.multi-db-config.json` or `.multi-db-driver-config.json` file that should most commonly be placed in the root directory of your app.
 
 Multi-DB Driver will look for that file in up to 3 directories above where the Multi-DB Driver module is located (e.g. looking at parent directories starting with node_modules). You can change this behavior by setting the `MULTI_DB_DRIVER_CONFIG_FILE_SEARCH_ATTEMPTS` environment variable to a number other than 3. The default value of 3 will in most circumstances include the root directory of your app as one of the locations that will be searched for your Multi-DB Driver config, which is why it's the default value.
 
 If you want to set a location for the config file manually, then set the `MULTI_DB_DRIVER_CONFIG_LOCATION` environment variable to the absolute path on your filesystem to where your config is.
 
-It is recommended that you add `.multi-db-driver-config.json` to your .gitignore as well because it will typically contain database credentials.
+It is recommended that you add `.multi-db-config.json` and/or `.multi-db-driver-config.json` to your .gitignore as well because they will typically contain database credentials.
 
 See "Configuration" for information about how to set up a Multi-DB Driver config.
 
