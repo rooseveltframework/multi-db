@@ -38,7 +38,7 @@ loggerConfig: {
 
 - `questionMarkParamsForPostgres` *[Boolean]*: Automatically convert parameterized query placeholders from `?` to `$ + number` within Multi-DB Driver for PostgreSQL queries so you can use the `?` syntax in PostgreSQL queries, which isn't possible in native PostgreSQL queries. Default: `true`.
 
-- `mergeConfig` *[Boolean]*: Merge config values passed via constructor or environment variable with any `.multi-db-driver-config.json` file detected in your app's directory structure. Default: `true`.
+- `mergeConfig` *[Boolean]*: Merge config values passed via constructor or environment variable with any `.multi-db-config.json` or `.multi-db-driver-config.json` file detected in your app's directory structure. Default: `true`.
 
 ### Example configs
 

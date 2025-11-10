@@ -173,6 +173,7 @@ temp/
 multi-db-driver-mysql-dump-password.cnf
 .multi-db-driver-pg-dump-config
 .multi-db-driver-config.json
+.multi-db-config.json
 .npm-cache
 test/configs
 test/db
