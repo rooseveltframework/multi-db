@@ -1,7 +1,7 @@
 ## 1.1.1
 
 - Altered `configFinder.js` to look for both `.multi-db-config.json` and `.multi-db-driver-config.json` when searching for user defined config file.
-- Updated various dependencies.
+- Updated dependencies.
 
 ## 1.1.0
 
